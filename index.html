@@ -1,1 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Remimder — Your Life Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f5f5f5;
+  --surface: #ffffff;
+  --glass: rgba(255,255,255,0.72);
+  --glass-border: rgba(0,0,0,0.08);
+  --text: #000000;
+  --text2: #666666;
+  --accent: #000000;
+  --accent2: #333333;
+  --accent-bg: rgba(0,0,0,0.04);
+  --accent-text: #ffffff;
+  --green: #2a9d8f;
+  --shadow: rgba(0,0,0,0.06);
+  --card-shadow: 0 2px 20px rgba(0,0,0,0.06);
+  --nav-bg: rgba(255,255,255,0.92);
+  --input-bg: #f5f5f5;
+  --input-border: rgba(0,0,0,0.1);
+  --chat-user: #000000;
+  --chat-user-text: #ffffff;
+  --chat-ai: #f5f5f5;
+  --chat-ai-text: #000000;
+  --divider: rgba(0,0,0,0.08);
+  --hover: rgba(0,0,0,0.03);
+  --toggle-off: #cccccc;
+  --pill-text: #000000;
+}
+.dark {
+  --bg: #000000;
+  --bg2: #111111;
+  --surface: #111111;
+  --glass: rgba(17,17,17,0.78);
+  --glass-border: rgba(255,255,255,0.08);
+  --text: #ffffff;
+  --text2: #999999;
+  --accent: #ffffff;
+  --accent2: #cccccc;
+  --accent-bg: rgba(255,255,255,0.06);
+  --accent-text: #000000;
+  --green: #34d399;
+  --shadow: rgba(0,0,0,0.4);
+  --card-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  --nav-bg: rgba(0,0,0,0.92);
+  --input-bg: #111111;
+  --input-border: rgba(255,255,255,0.1);
+  --chat-user: #ffffff;
+  --chat-user-text: #000000;
+  --chat-ai: #111111;
+  --chat-ai-text: #ffffff;
+  --divider: rgba(255,255,255,0.08);
+  --hover: rgba(255,255,255,0.03);
+  --toggle-off: #333333;
+  --pill-text: #ffffff;
+}
 
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Lora',Georgia,serif;
+  background:var(--bg);color:var(--text);
+  overflow:hidden;height:100vh;width:100vw;
+  transition:background .5s ease,color .4s ease;
+}
+h1,h2,h3,h4,.brand,.nav-label,.auth-tab,.btn,.chat-input,.setting-label,.pill,.section-title{
+  font-family:'Syne',sans-serif;
+}
+
+/* ── PARTICLES ── */
+.particles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+.particle{
+  position:absolute;border-radius:50%;opacity:0;
+  animation:floatUp linear infinite;
+}
+@keyframes floatUp{
+  0%{transform:translateY(100vh) scale(0);opacity:0;}
+  15%{opacity:.5;}
+  85%{opacity:.2;}
+  100%{transform:translateY(-10vh) scale(1);opacity:0;}
+}
+
+/* ── LOADING SCREEN ── */
+#loading-screen{
+  position:fixed;inset:0;z-index:999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:#000000;
+  transition:opacity .8s ease,transform .8s ease;
+}
+#loading-screen.fade-out{opacity:0;transform:scale(1.08);pointer-events:none;}
+
+/* ── 3D ROBOT ── */
+.robot-scene{perspective:800px;margin-bottom:24px;}
+.robot{
+  width:160px;height:200px;position:relative;
+  transform-style:preserve-3d;
+  animation:robotFloat 3s ease-in-out infinite;
+  transition:transform .08s ease-out;
+}
+@keyframes robotFloat{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-12px);}
+}
+.robot-antenna{
+  position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  width:4px;height:28px;background:#555;border-radius:2px;z-index:2;
+}
+.robot-antenna-ball{
+  position:absolute;top:-26px;left:50%;transform:translateX(-50%);
+  width:16px;height:16px;border-radius:50%;
+  background:#ffffff;
+  box-shadow:0 0 20px rgba(255,255,255,0.5),0 0 40px rgba(255,255,255,0.2);
+  animation:antennaPulse 2s ease-in-out infinite;z-index:3;
+}
+@keyframes antennaPulse{
+  0%,100%{transform:translateX(-50%) scale(1);box-shadow:0 0 20px rgba(255,255,255,0.5);}
+  50%{transform:translateX(-50%) scale(1.2);box-shadow:0 0 35px rgba(255,255,255,0.6),0 0 60px rgba(255,255,255,0.3);}
+}
+.robot-head{
+  position:absolute;top:16px;left:50%;transform:translateX(-50%);
+  width:120px;height:108px;border-radius:48px 48px 42px 42px;
+  background:linear-gradient(145deg,#2a2a2a,#1a1a1a);
+  box-shadow:0 8px 30px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.05);
+  transform-style:preserve-3d;z-index:2;
+}
+.robot-face{position:absolute;inset:0;transform:translateZ(12px);}
+.robot-eye{
+  position:absolute;top:32px;width:34px;height:34px;border-radius:50%;
+  background:#ffffff;
+  box-shadow:0 0 12px rgba(255,255,255,0.3);overflow:hidden;
+}
+.robot-eye.left{left:20px;}
+.robot-eye.right{right:20px;}
+.robot-pupil{
+  position:absolute;width:16px;height:16px;border-radius:50%;
+  background:#000000;
+  top:50%;left:50%;margin:-8px 0 0 -8px;
+  transition:transform .06s ease-out;
+}
+.robot-pupil::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:5px;height:5px;border-radius:50%;background:#ffffff;
+}
+.robot-lid{
+  position:absolute;top:-2px;left:-2px;right:-2px;height:0;
+  background:#2a2a2a;border-radius:50%;
+  transition:height .15s ease;z-index:5;
+}
+.robot-cheek{
+  position:absolute;top:52px;width:18px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,0.08);
+}
+.robot-cheek.left{left:8px;}
+.robot-cheek.right{right:8px;}
+.robot-mouth{
+  position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+  width:28px;height:14px;border:3px solid #555;
+  border-top:none;border-radius:0 0 18px 18px;
+}
+.robot-body{
+  position:absolute;top:118px;left:50%;transform:translateX(-50%);
+  width:100px;height:64px;border-radius:24px 24px 30px 30px;
+  background:linear-gradient(145deg,#222222,#161616);
+  box-shadow:0 8px 20px rgba(0,0,0,0.4),inset 0 2px 0 rgba(255,255,255,0.04);
+  z-index:1;
+}
+.robot-body::after{
+  content:'';position:absolute;top:16px;left:50%;transform:translateX(-50%);
+  width:24px;height:24px;border-radius:8px;
+  background:#ffffff;opacity:0.15;
+  box-shadow:0 0 12px rgba(255,255,255,0.2);
+}
+.robot-arm{
+  position:absolute;top:124px;width:22px;height:42px;
+  border-radius:12px;background:#1a1a1a;z-index:0;
+}
+.robot-arm.left{left:8px;transform:rotate(12deg);}
+.robot-arm.right{right:8px;transform:rotate(-12deg);}
+
+@keyframes blink{0%,90%,100%{height:0;}95%{height:100%;}}
+
+/* ── LOADING TEXT & BAR ── */
+.load-brand{
+  font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;
+  color:#ffffff;letter-spacing:0.06em;margin-bottom:6px;
+  opacity:0;animation:fadeUp .6s .8s ease forwards;
+}
+.load-tagline{
+  font-family:'Lora',serif;font-style:italic;font-size:.95rem;
+  color:rgba(255,255,255,0.35);margin-bottom:32px;
+  opacity:0;animation:fadeUp .6s 1s ease forwards;
+}
+.load-bar-track{
+  width:200px;height:3px;border-radius:2px;
+  background:rgba(255,255,255,0.1);
+  opacity:0;animation:fadeUp .6s 1.2s ease forwards;
+  overflow:hidden;
+}
+.load-bar{
+  height:100%;width:0;border-radius:2px;
+  background:#ffffff;transition:width .1s linear;
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ── AUTH SCREEN ── */
+#auth-screen{
+  position:fixed;inset:0;z-index:100;
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--bg);padding:24px;
+  opacity:0;transition:opacity .5s ease;
+}
+#auth-screen.active{display:flex;opacity:1;}
+
+.auth-card{
+  width:100%;max-width:380px;padding:40px 28px;
+  background:var(--surface);
+  border:1px solid var(--glass-border);
+  border-radius:28px;
+  box-shadow:var(--card-shadow);
+  animation:slideUp .6s ease;
+}
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(30px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.auth-logo{text-align:center;margin-bottom:28px;}
+.auth-logo h2{
+  font-size:1.9rem;font-weight:800;letter-spacing:.03em;
+  color:var(--text);
+}
+.auth-logo p{font-size:.85rem;color:var(--text2);margin-top:4px;}
+
+.auth-tabs{
+  display:flex;background:var(--bg2);border-radius:14px;padding:4px;margin-bottom:24px;
+}
+.auth-tab{
+  flex:1;padding:11px;border:none;background:none;
+  font-size:.88rem;font-weight:600;cursor:pointer;
+  border-radius:11px;color:var(--text2);
+  transition:all .3s ease;
+}
+.auth-tab.active{
+  background:var(--surface);color:var(--text);
+  box-shadow:0 2px 8px var(--shadow);
+}
+
+.auth-form{display:flex;flex-direction:column;gap:14px;}
+.auth-form.hidden{display:none;}
+.form-group{position:relative;}
+.form-group input{
+  width:100%;padding:14px 16px;border:2px solid var(--input-border);
+  border-radius:14px;background:var(--input-bg);
+  font-family:'Lora',serif;font-size:.9rem;color:var(--text);
+  transition:all .3s ease;outline:none;
+}
+.form-group input:focus{border-color:var(--text);background:var(--surface);}
+.form-group input::placeholder{color:var(--text2);opacity:.5;}
+
+.btn-primary{
+  padding:14px;border:none;border-radius:14px;
+  background:var(--accent);color:var(--accent-text);
+  font-family:'Syne',sans-serif;font-size:.95rem;
+  font-weight:700;cursor:pointer;letter-spacing:.04em;
+  transition:all .3s ease;margin-top:4px;
+}
+.btn-primary:hover{opacity:.85;transform:translateY(-2px);}
+.btn-primary:active{transform:translateY(0);}
+
+.auth-divider{
+  display:flex;align-items:center;gap:12px;margin:20px 0 16px;
+  font-size:.8rem;color:var(--text2);font-family:'Syne',sans-serif;
+}
+.auth-divider::before,.auth-divider::after{
+  content:'';flex:1;height:1px;background:var(--divider);
+}
+
+.social-row{display:flex;justify-content:center;gap:14px;}
+.glass-icon{
+  width:52px;height:52px;
+  background:var(--bg2);
+  border:1px solid var(--glass-border);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .3s ease;
+  box-shadow:var(--card-shadow);
+}
+.glass-icon:hover{transform:translateY(-3px);border-color:var(--text);}
+.glass-icon svg{width:22px;height:22px;}
+
+/* ── MAIN APP ── */
+#app{
+  position:fixed;inset:0;z-index:50;
+  display:none;flex-direction:column;
+  background:var(--bg);
+  opacity:0;transition:opacity .5s ease;
+}
+#app.active{display:flex;opacity:1;}
+
+.app-header{
+  padding:16px 24px 8px;padding-top:max(16px,env(safe-area-inset-top));
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;
+}
+.greeting h3{font-size:1.3rem;font-weight:700;line-height:1.3;}
+.greeting p{font-size:.82rem;color:var(--text2);margin-top:2px;}
+.theme-dot{
+  width:36px;height:36px;border-radius:50%;border:1.5px solid var(--glass-border);
+  background:var(--bg2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .3s ease;font-size:1rem;
+}
+.theme-dot:hover{border-color:var(--text);transform:scale(1.1);}
+
+/* ── PAGES ── */
+.page-container{flex:1;overflow:hidden;position:relative;}
+.page{
+  position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  padding:12px 20px 100px;
+  opacity:0;transform:translateY(12px);
+  transition:opacity .35s ease,transform .35s ease;
+  pointer-events:none;
+  -webkit-overflow-scrolling:touch;
+}
+.page.active{opacity:1;transform:translateY(0);pointer-events:auto;}
+
+/* ── HOME ── */
+.daily-card{
+  padding:28px;border-radius:24px;margin-bottom:24px;
+  background:var(--accent);color:var(--accent-text);
+  position:relative;overflow:hidden;
+}
+.daily-card::after{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.daily-card .card-label{
+  font-family:'Syne',sans-serif;font-size:.72rem;
+  text-transform:uppercase;letter-spacing:.14em;
+  opacity:.6;margin-bottom:10px;position:relative;z-index:1;
+}
+.daily-card .card-quote{
+  font-size:1.05rem;line-height:1.65;font-style:italic;
+  position:relative;z-index:1;
+}
+.daily-card .card-author{
+  font-family:'Syne',sans-serif;font-size:.78rem;
+  margin-top:12px;opacity:.5;position:relative;z-index:1;
+}
+
+.section-title{
+  font-family:'Syne',sans-serif;font-size:.78rem;
+  text-transform:uppercase;letter-spacing:.12em;
+  color:var(--text2);margin-bottom:14px;
+}
+
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+.quick-card{
+  padding:20px;border-radius:20px;
+  background:var(--surface);border:1px solid var(--glass-border);
+  box-shadow:var(--card-shadow);cursor:pointer;
+  transition:all .3s ease;
+  opacity:0;animation:fadeUp .5s ease forwards;
+}
+.quick-card:nth-child(1){animation-delay:.1s;}
+.quick-card:nth-child(2){animation-delay:.2s;}
+.quick-card:nth-child(3){animation-delay:.3s;}
+.quick-card:nth-child(4){animation-delay:.4s;}
+.quick-card:hover{transform:translateY(-4px);border-color:var(--text);}
+.quick-card .qc-icon{font-size:1.5rem;margin-bottom:10px;}
+.quick-card h4{font-family:'Syne',sans-serif;font-size:.86rem;font-weight:700;margin-bottom:4px;}
+.quick-card p{font-size:.76rem;color:var(--text2);line-height:1.45;}
+
+.streak-bar{
+  display:flex;align-items:center;gap:12px;
+  padding:16px 20px;border-radius:18px;
+  background:var(--surface);border:1px solid var(--glass-border);
+  box-shadow:var(--card-shadow);margin-bottom:20px;
+}
+.streak-bar .streak-icon{font-size:1.3rem;}
+.streak-bar .streak-info{flex:1;}
+.streak-bar .streak-info h4{font-family:'Syne',sans-serif;font-size:.84rem;}
+.streak-bar .streak-info p{font-size:.75rem;color:var(--text2);}
+.streak-count{
+  font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;
+  color:var(--text);
+}
+
+/* ── COACH / CHAT ── */
+#coach-page{padding:12px 16px 100px;display:flex;flex-direction:column;}
+.chat-messages{
+  flex:1;overflow-y:auto;padding-bottom:12px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.msg{
+  max-width:82%;padding:14px 18px;border-radius:20px;
+  font-size:.88rem;line-height:1.55;
+  opacity:0;animation:msgIn .35s ease forwards;
+}
+@keyframes msgIn{
+  from{opacity:0;transform:translateY(10px) scale(0.97);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+.msg.ai{
+  align-self:flex-start;
+  background:var(--chat-ai);color:var(--chat-ai-text);
+  border-bottom-left-radius:6px;
+}
+.msg.user{
+  align-self:flex-end;
+  background:var(--chat-user);color:var(--chat-user-text);
+  border-bottom-right-radius:6px;
+}
+.typing-indicator{
+  display:flex;gap:5px;padding:14px 18px;
+  background:var(--chat-ai);border-radius:20px;
+  border-bottom-left-radius:6px;align-self:flex-start;
+}
+.typing-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--text2);
+  animation:typingBounce 1.2s ease-in-out infinite;
+}
+.typing-dot:nth-child(2){animation-delay:.15s;}
+.typing-dot:nth-child(3){animation-delay:.3s;}
+@keyframes typingBounce{
+  0%,60%,100%{transform:translateY(0);}
+  30%{transform:translateY(-6px);}
+}
+
+.chat-input-area{
+  display:flex;gap:10px;padding:12px 0;
+  position:sticky;bottom:0;background:var(--bg);
+}
+.chat-input{
+  flex:1;padding:14px 18px;border:1.5px solid var(--input-border);
+  border-radius:18px;background:var(--input-bg);
+  font-family:'Lora',serif;font-size:.88rem;color:var(--text);
+  outline:none;transition:border-color .3s ease;
+}
+.chat-input:focus{border-color:var(--text);}
+.chat-send{
+  width:48px;height:48px;border:none;border-radius:50%;
+  background:var(--accent);color:var(--accent-text);
+  font-size:1.2rem;cursor:pointer;
+  transition:all .3s ease;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.chat-send:hover{opacity:.8;transform:scale(1.06);}
+.chat-send svg{width:20px;height:20px;}
+
+/* ── RECOMMEND ── */
+.rec-card{
+  display:flex;gap:14px;padding:18px;margin-bottom:12px;
+  border-radius:20px;background:var(--surface);
+  border:1px solid var(--glass-border);box-shadow:var(--card-shadow);
+  transition:all .3s ease;cursor:pointer;
+  opacity:0;animation:fadeUp .5s ease forwards;
+}
+.rec-card:nth-child(2){animation-delay:.08s;}
+.rec-card:nth-child(3){animation-delay:.16s;}
+.rec-card:nth-child(4){animation-delay:.24s;}
+.rec-card:nth-child(5){animation-delay:.32s;}
+.rec-card:nth-child(6){animation-delay:.40s;}
+.rec-card:nth-child(7){animation-delay:.48s;}
+.rec-card:hover{transform:translateY(-2px);border-color:var(--text);}
+.rec-icon{
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;flex-shrink:0;background:var(--bg2);
+}
+.rec-content{flex:1;}
+.rec-content h4{font-family:'Syne',sans-serif;font-size:.88rem;margin-bottom:3px;}
+.rec-content p{font-size:.76rem;color:var(--text2);line-height:1.45;}
+.rec-badges{display:flex;gap:6px;margin-top:8px;}
+.pill{
+  padding:3px 10px;border-radius:20px;font-size:.66rem;
+  font-weight:600;letter-spacing:.03em;
+  background:var(--accent-bg);color:var(--pill-text);
+  border:1px solid var(--glass-border);
+}
+
+/* ── SETTINGS ── */
+.settings-group{
+  margin-bottom:20px;padding:0;
+  border-radius:20px;background:var(--surface);
+  border:1px solid var(--glass-border);
+  box-shadow:var(--card-shadow);overflow:hidden;
+}
+.setting-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;cursor:pointer;
+  transition:background .2s ease;
+}
+.setting-item:not(:last-child){border-bottom:1px solid var(--divider);}
+.setting-item:hover{background:var(--hover);}
+.setting-left{display:flex;align-items:center;gap:14px;}
+.setting-icon{
+  font-size:1.1rem;width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+}
+.setting-label{font-size:.88rem;font-weight:600;}
+.setting-sub{font-size:.74rem;color:var(--text2);margin-top:2px;}
+
+.toggle{
+  width:46px;height:26px;border-radius:13px;
+  background:var(--toggle-off);
+  position:relative;cursor:pointer;transition:all .3s ease;flex-shrink:0;
+}
+.toggle.on{background:var(--accent);}
+.toggle::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:20px;height:20px;border-radius:50%;
+  background:#ffffff;transition:transform .3s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 1px 4px rgba(0,0,0,0.15);
+}
+.toggle.on::after{transform:translateX(20px);}
+
+.settings-footer{
+  text-align:center;padding:24px 20px;
+  font-size:.78rem;color:var(--text2);
+}
+.settings-footer .version{
+  font-family:'Syne',sans-serif;font-weight:700;
+  color:var(--text);font-size:.84rem;
+}
+
+/* ── BOTTOM NAV ── */
+#bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:80;
+  display:flex;justify-content:space-around;align-items:center;
+  padding:8px 16px;padding-bottom:max(8px,env(safe-area-inset-bottom));
+  background:var(--nav-bg);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid var(--glass-border);
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+}
+#bottom-nav.hidden{transform:translateY(100%);}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 12px;border-radius:14px;cursor:pointer;
+  transition:all .3s ease;position:relative;
+}
+.nav-item .ni-icon{
+  width:22px;height:22px;transition:all .3s ease;opacity:.35;
+  stroke:var(--text);
+}
+.nav-item .nav-label{
+  font-size:.62rem;font-weight:600;letter-spacing:.04em;
+  color:var(--text2);transition:all .3s ease;opacity:.45;
+}
+.nav-item.active .ni-icon{opacity:1;}
+.nav-item.active .nav-label{color:var(--text);opacity:1;}
+.nav-item.active{background:var(--accent-bg);}
+.nav-item.active::before{
+  content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  width:20px;height:2px;border-radius:1px;background:var(--text);
+}
+.nav-icon-anim{
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s ease;
+}
+#bottom-nav.hidden .nav-icon-anim{opacity:0;transform:translateY(8px);}
+#bottom-nav.hidden .nav-label{opacity:0;transform:translateY(5px);}
+
+/* ── SCROLLBAR ── */
+.page::-webkit-scrollbar{width:3px;}
+.page::-webkit-scrollbar-track{background:transparent;}
+.page::-webkit-scrollbar-thumb{background:var(--text2);border-radius:3px;opacity:.2;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:400px){
+  .auth-card{padding:28px 20px;}
+  .load-brand{font-size:2.2rem;}
+  .quick-grid{gap:10px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ PARTICLES ═══════ -->
+<div class="particles" id="particles"></div>
+
+<!-- ═══════ LOADING SCREEN ═══════ -->
+<div id="loading-screen">
+  <div class="robot-scene">
+    <div class="robot" id="robot">
+      <div class="robot-antenna"></div>
+      <div class="robot-antenna-ball"></div>
+      <div class="robot-head">
+        <div class="robot-face">
+          <div class="robot-eye left"><div class="robot-lid" id="lid-l"></div><div class="robot-pupil" id="pupil-l"></div></div>
+          <div class="robot-eye right"><div class="robot-lid" id="lid-r"></div><div class="robot-pupil" id="pupil-r"></div></div>
+          <div class="robot-cheek left"></div>
+          <div class="robot-cheek right"></div>
+          <div class="robot-mouth"></div>
+        </div>
+      </div>
+      <div class="robot-body"></div>
+      <div class="robot-arm left"></div>
+      <div class="robot-arm right"></div>
+    </div>
+  </div>
+  <div class="load-brand">Remimder</div>
+  <div class="load-tagline">Your pocket life coach</div>
+  <div class="load-bar-track"><div class="load-bar" id="load-bar"></div></div>
+</div>
+
+<!-- ═══════ AUTH SCREEN ═══════ -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h2>Remimder</h2>
+      <p>Make better choices, every day</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Login</button>
+      <button class="auth-tab" data-tab="signup" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+    <form class="auth-form" id="login-form" onsubmit="handleAuth(event,'login')">
+      <div class="form-group"><input type="email" placeholder="Email address" required></div>
+      <div class="form-group"><input type="password" placeholder="Password" required></div>
+      <button type="submit" class="btn-primary">Sign In</button>
+    </form>
+    <form class="auth-form hidden" id="signup-form" onsubmit="handleAuth(event,'signup')">
+      <div class="form-group"><input type="text" placeholder="Full name" required></div>
+      <div class="form-group"><input type="email" placeholder="Email address" required></div>
+      <div class="form-group"><input type="password" placeholder="Password" required></div>
+      <div class="form-group"><input type="password" placeholder="Confirm password" required></div>
+      <button type="submit" class="btn-primary">Create Account</button>
+    </form>
+    <div class="auth-divider">or continue with</div>
+    <div class="social-row">
+      <div class="glass-icon" title="Google">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 001 12c0 1.77.42 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      </div>
+      <div class="glass-icon" title="Apple">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      </div>
+      <div class="glass-icon" title="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MAIN APP ═══════ -->
+<div id="app">
+  <div class="app-header">
+    <div class="greeting">
+      <h3 id="greet-text">Good morning</h3>
+      <p id="greet-sub">Ready to make great choices?</p>
+    </div>
+    <div class="theme-dot" id="theme-dot" onclick="toggleTheme()" title="Toggle theme">☀</div>
+  </div>
+
+  <div class="page-container">
+    <!-- HOME -->
+    <div class="page active" id="home-page">
+      <div class="daily-card">
+        <div class="card-label">Today's Wisdom</div>
+        <div class="card-quote" id="daily-quote">"The best time to plant a tree was 20 years ago. The second best time is now."</div>
+        <div class="card-author">— Chinese Proverb</div>
+      </div>
+
+      <div class="section-title">Quick Actions</div>
+      <div class="quick-grid">
+        <div class="quick-card" onclick="showPage('coach')">
+          <div class="qc-icon">?</div>
+          <h4>Make a Decision</h4>
+          <p>Stuck between choices? Let's think it through.</p>
+        </div>
+        <div class="quick-card" onclick="showPage('coach')">
+          <div class="qc-icon">?</div>
+          <h4>Set a Goal</h4>
+          <p>Define what matters and plan your path.</p>
+        </div>
+        <div class="quick-card" onclick="showPage('coach')">
+          <div class="qc-icon">?</div>
+          <h4>Stress Relief</h4>
+          <p>Feeling overwhelmed? Let's decompress.</p>
+        </div>
+        <div class="quick-card" onclick="showPage('coach')">
+          <div class="qc-icon">?</div>
+          <h4>Daily Reflection</h4>
+          <p>Review your day and grow from it.</p>
+        </div>
+      </div>
+
+      <div class="streak-bar">
+        <div class="streak-icon">?</div>
+        <div class="streak-info">
+          <h4>Coach Streak</h4>
+          <p>Keep chatting daily to build momentum</p>
+        </div>
+        <div class="streak-count" id="streak-count">3</div>
+      </div>
+    </div>
+
+    <!-- COACH -->
+    <div class="page" id="coach-page">
+      <div class="chat-messages" id="chat-messages">
+        <div class="msg ai">
+          Hey there! I'm <strong>Remimder</strong>, your personal life coach. I can help with decisions, habits, stress, goals, relationships, and more. What's on your mind?
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <input class="chat-input" id="chat-input" placeholder="Ask your coach anything..." onkeydown="if(event.key==='Enter')sendMessage()">
+        <button class="chat-send" onclick="sendMessage()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- RECOMMEND -->
+    <div class="page" id="recommend-page">
+      <div class="section-title" style="margin-bottom:6px;">Recommended for You</div>
+      <p style="font-size:.82rem;color:var(--text2);margin-bottom:18px;">Apps &amp; tools to boost your journey</p>
+
+      <div class="rec-card">
+        <div class="rec-icon">?</div>
+        <div class="rec-content">
+          <h4>Headspace</h4>
+          <p>Guided meditation and mindfulness for daily calm and focus.</p>
+          <div class="rec-badges"><span class="pill">iOS</span><span class="pill">Android</span></div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">?</div>
+        <div class="rec-content">
+          <h4>Todoist</h4>
+          <p>Organize tasks and habits with smart scheduling and reminders.</p>
+          <div class="rec-badges"><span class="pill">iOS</span><span class="pill">Android</span></div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">?</div>
+        <div class="rec-content">
+          <h4>WaterMinder</h4>
+          <p>Track your hydration with smart reminders and visual progress.</p>
+          <div class="rec-badges"><span class="pill">iOS</span><span class="pill">Android</span></div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">?</div>
+        <div class="rec-content">
+          <h4>Strava</h4>
+          <p>Track runs, rides and workouts with community challenges.</p>
+          <div class="rec-badges"><span class="pill">iOS</span><span class="pill">Android</span></div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">?</div>
+        <div class="rec-content">
+          <h4>Day One Journal</h4>
+          <p>Beautiful journaling to reflect, record memories and track growth.</p>
+          <div class="rec-badges"><span class="pill">iOS</span><span class="pill">Android</span></div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-icon">?</div>
+        <div class="rec-content">
+          <h4>Forest</h4>
+          <p>Stay focused by growing virtual trees. Put your phone down and be present.</p>
+          <div class="rec-badges"><span class="pill">iOS</span><span class="pill">Android</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="settings-page">
+      <div class="section-title" style="margin-bottom:14px;">Preferences</div>
+      <div class="settings-group">
+        <div class="setting-item" onclick="toggleAutoTheme()">
+          <div class="setting-left">
+            <div class="setting-icon">?</div>
+            <div>
+              <div class="setting-label">Auto Day/Night</div>
+              <div class="setting-sub">Theme follows time of day</div>
+            </div>
+          </div>
+          <div class="toggle on" id="toggle-auto"></div>
+        </div>
+        <div class="setting-item" onclick="toggleNotifs()">
+          <div class="setting-left">
+            <div class="setting-icon">?</div>
+            <div>
+              <div class="setting-label">Notifications</div>
+              <div class="setting-sub">Daily coaching reminders</div>
+            </div>
+          </div>
+          <div class="toggle" id="toggle-notif"></div>
+        </div>
+        <div class="setting-item" onclick="toggleSounds()">
+          <div class="setting-left">
+            <div class="setting-icon">?</div>
+            <div>
+              <div class="setting-label">Sound Effects</div>
+              <div class="setting-sub">Chat and UI sounds</div>
+            </div>
+          </div>
+          <div class="toggle on" id="toggle-sound"></div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-bottom:14px;">Account</div>
+      <div class="settings-group">
+        <div class="setting-item">
+          <div class="setting-left">
+            <div class="setting-icon">?</div>
+            <div>
+              <div class="setting-label">Edit Profile</div>
+              <div class="setting-sub">Name, photo, preferences</div>
+            </div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-left">
+            <div class="setting-icon">?</div>
+            <div>
+              <div class="setting-label">My Stats</div>
+              <div class="setting-sub">Sessions, streaks, progress</div>
+            </div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-left">
+            <div class="setting-icon">?</div>
+            <div>
+              <div class="setting-label">Chat History</div>
+              <div class="setting-sub">Past conversations with coach</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-bottom:14px;">Support</div>
+      <div class="settings-group">
+        <div class="setting-item">
+          <div class="setting-left">
+            <div class="setting-icon">?</div>
+            <div>
+              <div class="setting-label">Help &amp; FAQ</div>
+              <div class="setting-sub">Get answers and support</div>
+            </div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-left">
+            <div class="setting-icon">?</div>
+            <div>
+              <div class="setting-label">Privacy Policy</div>
+              <div class="setting-sub">How we protect your data</div>
+            </div>
+          </div>
+        </div>
+        <div class="setting-item" onclick="handleLogout()">
+          <div class="setting-left">
+            <div class="setting-icon">?</div>
+            <div>
+              <div class="setting-label" style="color:var(--text2);">Log Out</div>
+              <div class="setting-sub">Sign out of your account</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-footer">
+        <div class="version">Remimder v1.0</div>
+        <p style="margin-top:4px;">Made with care</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav id="bottom-nav">
+    <div class="nav-item active" data-page="home" onclick="showPage('home')">
+      <div class="nav-icon-anim">
+        <svg class="ni-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span class="nav-label">Home</span>
+    </div>
+    <div class="nav-item" data-page="coach" onclick="showPage('coach')">
+      <div class="nav-icon-anim">
+        <svg class="ni-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      </div>
+      <span class="nav-label">Coach</span>
+    </div>
+    <div class="nav-item" data-page="recommend" onclick="showPage('recommend')">
+      <div class="nav-icon-anim">
+        <svg class="ni-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <span class="nav-label">Picks</span>
+    </div>
+    <div class="nav-item" data-page="settings" onclick="showPage('settings')">
+      <div class="nav-icon-anim">
+        <svg class="ni-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.32 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </div>
+      <span class="nav-label">Settings</span>
+    </div>
+  </nav>
+</div>
+
+<script>
+/* ═══════ STATE ═══════ */
+let isDark = false;
+let autoTheme = true;
+let currentPage = 'home';
+let lastScroll = 0;
+
+/* ═══════ PARTICLES ═══════ */
+(function initParticles(){
+  const c = document.getElementById('particles');
+  for(let i = 0; i < 25; i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 3 + 1.5;
+    p.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;
+      background:rgba(255,255,255,0.4);
+      animation-duration:${Math.random()*8+6}s;
+      animation-delay:${Math.random()*6}s;
+    `;
+    c.appendChild(p);
+  }
+})();
+
+/* ═══════ 3D ROBOT EYE TRACKING ═══════ */
+const robot = document.getElementById('robot');
+const pupilL = document.getElementById('pupil-l');
+const pupilR = document.getElementById('pupil-r');
+const lidL = document.getElementById('lid-l');
+const lidR = document.getElementById('lid-r');
+
+function updateRobotLook(nx, ny){
+  const px = nx * 7;
+  const py = ny * 7;
+  if(pupilL) pupilL.style.transform = `translate(${px}px, ${py}px)`;
+  if(pupilR) pupilR.style.transform = `translate(${px}px, ${py}px)`;
+  if(robot) robot.style.transform = `rotateY(${nx*18}deg) rotateX(${-ny*12}deg)`;
+}
+
+document.addEventListener('mousemove', e => {
+  updateRobotLook(
+    (e.clientX / window.innerWidth - 0.5) * 2,
+    (e.clientY / window.innerHeight - 0.5) * 2
+  );
+});
+
+document.addEventListener('touchmove', e => {
+  const t = e.touches[0];
+  updateRobotLook(
+    (t.clientX / window.innerWidth - 0.5) * 2,
+    (t.clientY / window.innerHeight - 0.5) * 2
+  );
+}, {passive:true});
+
+if(window.DeviceOrientation){
+  window.addEventListener('deviceorientation', e => {
+    if(e.gamma !== null){
+      updateRobotLook(
+        Math.max(-1, Math.min(1, e.gamma / 35)),
+        Math.max(-1, Math.min(1, (e.beta - 45) / 35))
+      );
+    }
+  });
+}
+
+// Blink
+setInterval(()=>{
+  if(lidL && lidR){
+    lidL.style.animation = 'blink .25s ease';
+    lidR.style.animation = 'blink .25s ease';
+    setTimeout(()=>{lidL.style.animation='';lidR.style.animation='';},260);
+  }
+}, 3500);
+
+/* ═══════ THEME ═══════ */
+function detectTimeTheme(){
+  const h = new Date().getHours();
+  return (h >= 19 || h < 6);
+}
+
+function applyTheme(dark){
+  isDark = dark;
+  document.body.classList.toggle('dark', dark);
+  const dot = document.getElementById('theme-dot');
+  if(dot) dot.textContent = dark ? '\u263E' : '\u2600';
+  // Update particles color
+  document.querySelectorAll('.particle').forEach(p => {
+    p.style.background = dark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.15)';
+  });
+}
+
+function toggleTheme(){
+  autoTheme = false;
+  applyTheme(!isDark);
+  const t = document.getElementById('toggle-auto');
+  if(t) t.classList.remove('on');
+}
+
+function toggleAutoTheme(){
+  autoTheme = !autoTheme;
+  const t = document.getElementById('toggle-auto');
+  if(t) t.classList.toggle('on', autoTheme);
+  if(autoTheme) applyTheme(detectTimeTheme());
+}
+
+applyTheme(detectTimeTheme());
+
+setInterval(()=>{
+  if(autoTheme) applyTheme(detectTimeTheme());
+}, 60000);
+
+/* ═══════ GREETING ═══════ */
+function updateGreeting(){
+  const h = new Date().getHours();
+  const gt = document.getElementById('greet-text');
+  const gs = document.getElementById('greet-sub');
+  if(!gt) return;
+  if(h < 6){ gt.textContent = 'Good night'; gs.textContent = 'Rest well, tomorrow is a new chapter.'; }
+  else if(h < 12){ gt.textContent = 'Good morning'; gs.textContent = 'A fresh start. What will you decide today?'; }
+  else if(h < 17){ gt.textContent = 'Good afternoon'; gs.textContent = 'Midday check-in. How are you feeling?'; }
+  else if(h < 21){ gt.textContent = 'Good evening'; gs.textContent = 'Wind down and reflect on your day.'; }
+  else{ gt.textContent = 'Good night'; gs.textContent = 'Rest well, tomorrow is a new chapter.'; }
+}
+updateGreeting();
+
+/* ═══════ NAVIGATION ═══════ */
+function switchAuthTab(tab){
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.getElementById('login-form').classList.toggle('hidden', tab !== 'login');
+  document.getElementById('signup-form').classList.toggle('hidden', tab !== 'signup');
+}
+
+function handleAuth(e, type){
+  e.preventDefault();
+  document.getElementById('auth-screen').classList.remove('active');
+  setTimeout(()=>{
+    document.getElementById('auth-screen').style.display = 'none';
+    const app = document.getElementById('app');
+    app.style.display = 'flex';
+    requestAnimationFrame(() => app.classList.add('active'));
+  }, 300);
+}
+
+function handleLogout(){
+  const app = document.getElementById('app');
+  app.classList.remove('active');
+  setTimeout(()=>{
+    app.style.display = 'none';
+    const auth = document.getElementById('auth-screen');
+    auth.style.display = 'flex';
+    requestAnimationFrame(() => auth.classList.add('active'));
+  }, 400);
+}
+
+function showPage(page){
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === page + '-page'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+  const activePage = document.getElementById(page + '-page');
+  if(activePage) activePage.scrollTop = 0;
+  lastScroll = 0;
+}
+
+/* ═══════ SCROLL NAV HIDE ═══════ */
+document.querySelectorAll('.page').forEach(page => {
+  page.addEventListener('scroll', function(){
+    const st = this.scrollTop;
+    const nav = document.getElementById('bottom-nav');
+    if(!nav) return;
+    if(st > lastScroll && st > 60){
+      nav.classList.add('hidden');
+    } else {
+      nav.classList.remove('hidden');
+    }
+    lastScroll = st;
+  });
+});
+
+/* ═══════ AI COACH ═══════ */
+const coachResponses = [
+  {keys:['decide','decision','choose','choice','pick','stuck','between'],
+   responses:[
+    "Let's break this down. List your options and for each one ask: does this align with my values? The answer often becomes clear when you remove the noise.",
+    "Try the 10-10-10 rule: how will you feel about this in 10 minutes? 10 months? 10 years? That perspective shift is powerful.",
+    "Flip a coin. Not to decide, but to notice your gut reaction when it lands. That instant feeling reveals what you truly want.",
+    "Write down the worst-case scenario for each option. Often we fear the unknown more than the actual outcome."
+  ]},
+  {keys:['stress','anxious','anxiety','overwhelm','pressure','panic','worried','worry'],
+   responses:[
+    "Let's pause. Take 4 slow breaths: in for 4, hold for 4, out for 6. This activates your calming nervous system. You're safe right now.",
+    "Stress often comes from trying to control the uncontrollable. What can you actually influence right now? Focus only on that.",
+    "Name 5 things you can see, 4 you can touch, 3 you can hear, 2 you can smell, 1 you can taste. This grounding technique brings you back.",
+    "You've survived 100% of your worst days so far. You're stronger than this moment feels."
+  ]},
+  {keys:['goal','aim','target','achieve','ambition','dream','plan','future'],
+   responses:[
+    "Break your big goal into the smallest possible next step. What can you do in the next 15 minutes? Momentum builds from tiny actions.",
+    "SMART goals: Specific, Measurable, Achievable, Relevant, Time-bound. Vague goals create vague results.",
+    "Write your goal as if you've already achieved it. 'I have...' shifts your brain from dreaming to planning.",
+    "Share your goal with someone you trust. Accountability dramatically increases your chance of follow-through."
+  ]},
+  {keys:['sad','depress','down','lonely','alone','cry','unhappy','hopeless'],
+   responses:[
+    "I hear you. It's okay to not be okay. What you're feeling is valid and temporary. You're not alone in this.",
+    "Sometimes the bravest thing is simply getting through the day. Be gentle with yourself. You deserve that kindness.",
+    "Can you think of one small thing that brings you a moment of peace? A walk, a song, a warm drink? Do that right now.",
+    "If these feelings persist, please consider talking to a professional. There's real strength in asking for help. You matter."
+  ]},
+  {keys:['habit','routine','daily','morning','evening','consistent','discipline'],
+   responses:[
+    "Start with a 'keystone habit' — one small change that triggers others. Making your bed, a 5-minute walk, or water first thing.",
+    "The 2-minute rule: if a new habit takes less than 2 minutes, do it immediately. Don't let small tasks pile up.",
+    "Attach new habits to existing ones. 'After I pour my coffee, I'll journal for 5 minutes.' This is habit stacking.",
+    "Track your habits visually. A simple calendar with marks creates a 'don't break the chain' momentum."
+  ]},
+  {keys:['relationship','partner','friend','family','love','break','argument','fight','trust'],
+   responses:[
+    "In any conflict, try this: listen to understand, not to respond. Repeat back what you heard before sharing your perspective.",
+    "Healthy relationships need boundaries. Saying 'no' to what you don't want is saying 'yes' to your wellbeing.",
+    "Try 'I' statements: 'I feel hurt when...' is much more effective than 'You always...'",
+    "Every relationship has seasons. If you're in a tough one, ask: are we growing together? If yes, it's worth the work."
+  ]},
+  {keys:['career','job','work','money','business','startup','employ','boss','interview'],
+   responses:[
+    "Think about what energizes you vs. what drains you. Your ideal career lives at the intersection of skills, passion, and market need.",
+    "Don't compare your chapter 3 to someone's chapter 20. Every expert was once a beginner. Focus on your trajectory.",
+    "Network authentically. Help others without expecting returns. The best career opportunities come from genuine connections.",
+    "If you're unhappy at work, identify the root: the role, the culture, or the industry? Each has a different solution."
+  ]},
+  {keys:['health','exercise','eat','diet','sleep','fitness','weight','gym'],
+   responses:[
+    "Start with sleep. It's the foundation of everything. Aim for 7-8 hours with consistent wake times.",
+    "You don't need a perfect diet, just better choices. Add whole foods before restricting. Progress over perfection.",
+    "Find movement you enjoy. If you hate the gym, try dancing, swimming, hiking, or yoga. Consistency beats intensity.",
+    "Hydration is underrated. Enough water improves energy, mood, focus, and appetite. Start with a glass right now."
+  ]},
+  {keys:['thank','thanks','great','awesome','perfect','helpful','nice','good'],
+   responses:[
+    "I'm glad that helped! You already have the wisdom inside you. I just help you find it. What else is on your mind?",
+    "That's the spirit! Small insights lead to big changes. Keep showing up for yourself.",
+    "You're doing great by simply being here. Most people don't even try. Keep going!"
+  ]},
+  {keys:['hello','hi','hey','sup','yo'],
+   responses:[
+    "Hey there! What's been on your mind? Whether it's big decisions or small wins, I'm here for it.",
+    "Hello! How are you feeling today? Whatever it is, let's work through it together.",
+    "Hi! Ready to make today count? Tell me what's going on."
+  ]}
+];
+
+const defaultResponses = [
+  "Interesting thought. Can you tell me more? I want to understand the full picture before offering advice.",
+  "I appreciate you sharing that. What do you think is the core issue? Sometimes naming it helps.",
+  "Every situation has layers. On the surface, what's bothering you? Underneath, what's the deeper need?",
+  "You know yourself best. If you had to give yourself advice right now, what would it be?",
+  "Life rarely has simple answers, but asking the right questions is half the battle.",
+  "Take a breath. What's the one thing you can control in this situation?"
+];
+
+function getAIResponse(input){
+  const lower = input.toLowerCase();
+  for(const group of coachResponses){
+    if(group.keys.some(k => lower.includes(k))){
+      return group.responses[Math.floor(Math.random() * group.responses.length)];
+    }
+  }
+  return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+}
+
+function sendMessage(){
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+
+  const container = document.getElementById('chat-messages');
+
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg user';
+  userMsg.textContent = text;
+  container.appendChild(userMsg);
+  container.scrollTop = container.scrollHeight;
+
+  const typing = document.createElement('div');
+  typing.className = 'typing-indicator';
+  typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+  container.appendChild(typing);
+  container.scrollTop = container.scrollHeight;
+
+  setTimeout(() => {
+    typing.remove();
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'msg ai';
+    aiMsg.textContent = getAIResponse(text);
+    container.appendChild(aiMsg);
+    container.scrollTop = container.scrollHeight;
+  }, 800 + Math.random() * 1200);
+}
+
+/* ═══════ SETTINGS ═══════ */
+function toggleNotifs(){
+  document.getElementById('toggle-notif').classList.toggle('on');
+}
+function toggleSounds(){
+  document.getElementById('toggle-sound').classList.toggle('on');
+}
+
+/* ═══════ LOADING SEQUENCE ═══════ */
+(function startLoading(){
+  const bar = document.getElementById('load-bar');
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 15 + 5;
+    if(progress > 100) progress = 100;
+    bar.style.width = progress + '%';
+    if(progress >= 100){
+      clearInterval(interval);
+      setTimeout(() => {
+        const ls = document.getElementById('loading-screen');
+        ls.classList.add('fade-out');
+        setTimeout(() => {
+          ls.style.display = 'none';
+          const auth = document.getElementById('auth-screen');
+          auth.style.display = 'flex';
+          requestAnimationFrame(() => auth.classList.add('active'));
+        }, 800);
+      }, 400);
+    }
+  }, 180);
+})();
+
+/* ═══════ DAILY QUOTES ═══════ */
+const quotes = [
+  {text:"The best time to plant a tree was 20 years ago. The second best time is now.",author:"Chinese Proverb"},
+  {text:"In the middle of difficulty lies opportunity.",author:"Albert Einstein"},
+  {text:"What you do every day matters more than what you do once in a while.",author:"Gretchen Rubin"},
+  {text:"The only impossible journey is the one you never begin.",author:"Tony Robbins"},
+  {text:"Small daily improvements over time lead to stunning results.",author:"Robin Sharma"},
+  {text:"You don't have to be great to start, but you have to start to be great.",author:"Zig Ziglar"},
+  {text:"The mind is everything. What you think, you become.",author:"Buddha"},
+  {text:"Life is 10% what happens to you and 90% how you react to it.",author:"Charles Swindoll"}
+];
+const qi = new Date().getDate() % quotes.length;
+const qc = document.getElementById('daily-quote');
+const qa = qc ? qc.nextElementSibling : null;
+if(qc) qc.textContent = '"' + quotes[qi].text + '"';
+if(qa) qa.textContent = '— ' + quotes[qi].author;
+
+/* ═══════ STREAK ═══════ */
+const streakEl = document.getElementById('streak-count');
+if(streakEl){
+  streakEl.textContent = localStorage.getItem('remimder_streak') || '3';
+}
+</script>
+</body>
+  </html>

@@ -913,6 +913,9 @@ h1,h2,h3,h4,.brand,.nav-label,.auth-tab,.btn,.chat-input,.setting-label,.pill,.s
 </div>
 
 <script>
+  if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js');
+  }
 /* ═══════ STATE ═══════ */
 let isDark = false;
 let autoTheme = true;
